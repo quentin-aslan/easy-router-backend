@@ -95,7 +95,7 @@ def vpn_status():
     cmd = "nordvpn status"
     output = run_cmd(cmd)
     if output:
-        status = {key: value.strip() for key, value in (line.split(':') for line in output.splitlines())}
+        status = {key: value.strip() for line in output.splitlines() if ':' in line for key, value in [line.split(':')]}
         return jsonify(status)
     return jsonify({'success': False, 'error': 'Failed to get VPN status'}), 500
 
