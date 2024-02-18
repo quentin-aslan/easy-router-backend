@@ -35,7 +35,7 @@ def wifi():
     cmd = f"nmcli --colors no -f SSID,BARS dev wifi list ifname {INTERNAL_IFACE}"
     output = run_cmd(cmd)
     if output:
-        wifi_list = [{'ssid': ssid, 'bars': bars} for ssid, bars in (line.split() for line in output.splitlines()[1:])]
+        wifi_list = [{'ssid': ssid, 'bars': bars} for line in output.splitlines()[1:] if ' ' in line for ssid, bars in [line.split(None, 1)]]
         return jsonify(wifi_list)
     return jsonify({'success': False, 'error': 'Failed to get wifi list'}), 500
 
@@ -49,9 +49,11 @@ def wifi_current():
     """
     cmd = f"nmcli -t -f active,ssid dev wifi list ifname {INTERNAL_IFACE}"
     output = run_cmd(cmd)
-    if output and ':' in output:
-        ssid = output.split(':')[1].strip()
-        return jsonify({'ssid': ssid})
+    if output:
+        for line in output.splitlines():
+            if line.startswith('yes:'):
+                ssid = line.split(':')[1].strip()
+                return jsonify({'ssid': ssid})
     return jsonify({'success': False, 'error': 'Failed to get current wifi'}), 500
 
 @app.route('/wifi/connect', methods=['POST'])
@@ -121,3 +123,6 @@ def vpn_disconnect():
     if run_cmd(cmd):
         return jsonify({'success': True})
     return jsonify({'success': False, 'error': 'Failed to disconnect from VPN'}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=80)

@@ -17,8 +17,8 @@ POST {{host}}/wifi/connect
 Content-Type: application/json
 
 {
-    "ssid": "your_ssid",
-    "password": "your_password"
+    "ssid": "SSID",
+    "password": "PASSWORD"
 }
 
 ###
@@ -36,3 +36,8 @@ Content-Type: application/json
 {
     "city": "Montreal"
 }
+
+###
+
+# @name vpnDisconnect
+GET {{host}}/vpn/disconnect
