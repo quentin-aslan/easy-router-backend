@@ -16,4 +16,6 @@ flask run
 ```bash
 . .venv/bin/activate
 gunicorn -w 1 app:app
+# EX : Pour lancer sur le port 8081 
+gunicorn -w 1 -b :8081 app:app
 ```
